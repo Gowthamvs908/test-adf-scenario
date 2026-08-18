@@ -83,6 +83,43 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Write Row Count JSON",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Simple Copy Data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"method": "PUT",
+							"headers": {
+								"x-ms-blob-type": "BlockBlob",
+								"Content-Type": "application/json",
+								"x-ms-version": "2021-12-02"
+							},
+							"url": "https://pracadls26.blob.core.windows.net/outputdata/monitoring/rows_read.json",
+							"body": {
+								"value": "@concat(\n    '{',\n    '\"rowsRead\":', string(activity('Simple Copy Data').output.rowsRead), ',',\n    '\"rowsCopied\":', string(activity('Simple Copy Data').output.rowsCopied),\n    '}'\n)",
+								"type": "Expression"
+							},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://storage.azure.com/"
+							}
+						}
 					}
 				],
 				"policy": {
